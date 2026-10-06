@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "DATABASE_URL": "postgres://postgres:postgres@localhost:5432/themepark",
+    "DESTINATION_ID": "",
+    "PGSSL_DISABLE": "1"
+  }
+}
