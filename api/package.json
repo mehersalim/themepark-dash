@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "main": "dist/src/functions/*.js",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
     "start": "npm run build && func start",
-    "ingest:once": "node --env-file=.env --import tsx src/cli.ts"
+    "ingest:once": "node --env-file=.env --import tsx src/cli.ts",
+    "dev": "node --env-file=.env --import tsx src/dev-server.ts"
   },
   "dependencies": {
     "@azure/functions": "^4.5.0",
