@@ -1,0 +1,101 @@
+<header class="top">
+  <h1>Disney World Wait Times</h1>
+  <p class="sub">When is the best time to ride? Waits are collected every 10 minutes and analysed here.</p>
+</header>
+
+<main>
+  <section class="controls" aria-label="Choose a ride">
+    <label>Park
+      <select (change)="onPark($event)" [disabled]="loading() && !parks().length">
+        @for (p of parks(); track p.id) {
+          <option [value]="p.id" [selected]="p.id === parkId()">{{ p.name }}</option>
+        }
+      </select>
+    </label>
+    <label>Ride
+      <select (change)="onRide($event)" [disabled]="!attractions().length">
+        @for (a of attractions(); track a.id) {
+          <option [value]="a.id" [selected]="a.id === rideId()">{{ a.name }}</option>
+        }
+      </select>
+    </label>
+    <label>Look back
+      <select (change)="onDays($event)">
+        @for (d of dayOptions; track d) {
+          <option [value]="d" [selected]="d === days()">{{ d }} days</option>
+        }
+      </select>
+    </label>
+  </section>
+
+  <p class="status" role="status" aria-live="polite">
+    @if (loading()) { Loading… }
+  </p>
+
+  @if (error()) {
+    <div class="error" role="alert">
+      {{ error() }}
+      <button type="button" (click)="retry()">Try again</button>
+    </div>
+  }
+
+  @if (bestTimes(); as bt) {
+    <section class="cards" aria-label="Summary">
+      <article class="card good">
+        <h2>Best time to ride</h2>
+        @if (bt.best; as b) {
+          <p class="big">{{ formatHourRange(b.hour) }}</p>
+          <p class="small">Typically {{ b.medianWait }} min (based on {{ b.samples }} readings)</p>
+        } @else {
+          <p class="small">Not enough data yet. Each hour needs at least 3 readings.</p>
+        }
+      </article>
+      <article class="card bad">
+        <h2>Busiest time</h2>
+        @if (bt.worst; as w) {
+          <p class="big">{{ formatHourRange(w.hour) }}</p>
+          <p class="small">Typically {{ w.medianWait }} min (based on {{ w.samples }} readings)</p>
+        } @else {
+          <p class="small">Not enough data yet.</p>
+        }
+      </article>
+      <article class="card">
+        <h2>Right now</h2>
+        @if (currentRide()?.currentWait !== null && currentRide()?.currentWait !== undefined) {
+          <p class="big">{{ currentRide()?.currentWait }} min</p>
+          <p class="small">Posted standby wait</p>
+        } @else {
+          <p class="big muted">No posted wait</p>
+          <p class="small">The ride may be closed or not reporting.</p>
+        }
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Typical wait by hour of day</h2>
+      <p class="small">Median wait in park time. Green is the shortest, red the longest.</p>
+      @if (hourData().length) {
+        <app-chart type="bar" [labels]="hourLabels()" [data]="hourData()" [colors]="hourColors()"
+                   label="Median wait (min)" description="Bar chart of median wait time by hour of day" />
+      } @else {
+        <p class="empty">No readings for this ride in the last {{ days() }} days.</p>
+      }
+    </section>
+
+    <section class="panel">
+      <h2>Wait over time</h2>
+      <p class="small">Hourly average over the last {{ days() }} days (Eastern time).</p>
+      @if (trendData().length) {
+        <app-chart type="line" [labels]="trendLabels()" [data]="trendData()"
+                   label="Average wait (min)" description="Line chart of average wait time over the selected period" />
+      } @else {
+        <p class="empty">No readings to chart yet.</p>
+      }
+    </section>
+  }
+</main>
+
+<footer>
+  Data from <a href="https://themepark.wiki" target="_blank" rel="noopener">ThemeParks.wiki</a>.
+  Unofficial fan project, not affiliated with or endorsed by Disney.
+</footer>
