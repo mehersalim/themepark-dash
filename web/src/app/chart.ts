@@ -12,7 +12,7 @@ Chart.register(...registerables);
 export class ChartComponent {
   readonly type = input<'bar' | 'line'>('bar');
   readonly labels = input.required<string[]>();
-  readonly data = input.required<number[]>();
+  readonly data = input.required<(number | null)[]>();
   readonly label = input('Wait (min)');
   readonly colors = input<string[] | null>(null);
   readonly description = input('Chart');
@@ -49,6 +49,7 @@ export class ChartComponent {
             borderWidth: type === 'line' ? 2 : 0,
             pointRadius: type === 'line' ? 2 : 0,
             tension: 0.25,
+            spanGaps: false,
             borderRadius: 4,
           }],
         },

@@ -21,3 +21,4 @@ button { font: inherit; padding: .4rem .8rem; border-radius: 8px; border: 1px so
 .empty { color: var(--muted); margin: 1rem 0; }
 footer { margin-top: 2rem; font-size: .8rem; color: var(--muted); }
 footer a { color: var(--accent); }
+.note { display: block; margin-top: .25rem; }

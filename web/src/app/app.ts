@@ -3,10 +3,13 @@ import { ApiService } from './api.service';
 import { ChartComponent } from './chart';
 import { formatBucket, formatHour, formatHourRange } from './format';
 import { Attraction, BestTimes, Park, Trend } from './models';
+import { withGaps } from './series';
 
 const BLUE = '#3b82f6';
 const GREEN = '#16a34a';
 const RED = '#dc2626';
+const GRAY = '#6b7280';
+const MIN_SAMPLES = 3; // same rule as the API: an hour needs 3+ readings to count
 
 @Component({
   selector: 'app-root',
@@ -36,11 +39,15 @@ export class App {
   protected readonly hourData = computed(() => (this.bestTimes()?.hours ?? []).map((h) => h.medianWait));
   protected readonly hourColors = computed(() => {
     const bt = this.bestTimes();
-    return (bt?.hours ?? []).map((h) => (h.hour === bt?.best?.hour ? GREEN : h.hour === bt?.worst?.hour ? RED : BLUE));
+    return (bt?.hours ?? []).map((h) =>
+      h.samples < MIN_SAMPLES ? GRAY : h.hour === bt?.best?.hour ? GREEN : h.hour === bt?.worst?.hour ? RED : BLUE,
+    );
   });
+  protected readonly hasLowConfidence = computed(() => (this.bestTimes()?.hours ?? []).some((h) => h.samples < MIN_SAMPLES));
 
-  protected readonly trendLabels = computed(() => (this.trend()?.points ?? []).map((p) => formatBucket(p.bucket)));
-  protected readonly trendData = computed(() => (this.trend()?.points ?? []).map((p) => p.avgWait));
+  private readonly trendSeries = computed(() => withGaps(this.trend()?.points ?? [], (iso) => formatBucket(iso)));
+  protected readonly trendLabels = computed(() => this.trendSeries().labels);
+  protected readonly trendData = computed(() => this.trendSeries().data);
 
   private request = 0; // lets us ignore answers that arrive after the user has moved on
 

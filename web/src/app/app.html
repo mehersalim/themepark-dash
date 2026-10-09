@@ -73,7 +73,9 @@
 
     <section class="panel">
       <h2>Typical wait by hour of day</h2>
-      <p class="small">Median wait in park time. Green is the shortest, red the longest.</p>
+      <p class="small">Median wait in park time. Green is the shortest, red the longest.
+        @if (hasLowConfidence()) { <span class="note">Gray bars have fewer than 3 readings, so treat them with caution.</span> }
+      </p>
       @if (hourData().length) {
         <app-chart type="bar" [labels]="hourLabels()" [data]="hourData()" [colors]="hourColors()"
                    label="Median wait (min)" description="Bar chart of median wait time by hour of day" />
@@ -84,7 +86,7 @@
 
     <section class="panel">
       <h2>Wait over time</h2>
-      <p class="small">Hourly average over the last {{ days() }} days (Eastern time).</p>
+      <p class="small">Hourly average over the last {{ days() }} days (Eastern time). Gaps are overnight, when the park is closed.</p>
       @if (trendData().length) {
         <app-chart type="line" [labels]="trendLabels()" [data]="trendData()"
                    label="Average wait (min)" description="Line chart of average wait time over the selected period" />
