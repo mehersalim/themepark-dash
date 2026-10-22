@@ -11,7 +11,8 @@
     "test": "vitest run",
     "start": "npm run build && func start",
     "ingest:once": "node --env-file=.env --import tsx src/cli.ts",
-    "dev": "node --env-file=.env --import tsx src/dev-server.ts"
+    "dev": "node --env-file=.env --import tsx src/dev-server.ts",
+    "export:demo": "node --env-file=.env --import tsx src/export-snapshot.ts ../web/demo-data"
   },
   "dependencies": {
     "@azure/functions": "^4.5.0",

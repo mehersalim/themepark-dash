@@ -6,8 +6,11 @@ A full-stack analytics app that answers one question: **when is the best time to
 It collects live Walt Disney World wait times every 10 minutes, stores them in Postgres, and charts
 the patterns by hour of day and over time.
 
-**Live demo:** https://orange-river-06eb3aa10.4.azurestaticapps.net
-&nbsp;|&nbsp; **API:** https://themepark-func-10687.azurewebsites.net/api/parks
+**Demo (permanent):** https://mehersalim.github.io/themepark-dash/ &mdash; the same dashboard reading a saved
+snapshot of real data, so it works with no backend.
+**Live Azure deployment (free trial, until early November 2026):**
+[dashboard](https://orange-river-06eb3aa10.4.azurestaticapps.net) and
+[API](https://themepark-func-10687.azurewebsites.net/api/parks).
 
 > Unofficial fan project. Not affiliated with or endorsed by Disney. Data from [ThemeParks.wiki](https://themeparks.wiki).
 
@@ -36,6 +39,16 @@ flowchart LR
 3. **Serve:** a small read-only REST API returns those results as JSON.
 4. **Show:** an Angular app renders the best and busiest hours, a bar chart by hour of day, and a trend line over time.
 
+## Demo mode (works after the backend is gone)
+
+Cloud free tiers expire, so the dashboard has a second build that needs no backend:
+
+- `npm run export:demo` (in `api/`) reuses the API's own router to save a snapshot of the last 30 days
+  as JSON files in `web/demo-data/`. The files have exactly the same shape as the live API's responses.
+- `ng build --configuration production,demo` swaps one config file so the Angular service reads those
+  files instead of calling the API. The rest of the app does not know the difference.
+- A GitHub Actions workflow publishes that build to GitHub Pages on every merge.
+
 ## Tech stack
 
 | Layer | Technology |
@@ -43,7 +56,7 @@ flowchart LR
 | Front end | Angular 22 (standalone components, signals), Chart.js, Vitest |
 | API and ingestion | Node 22, TypeScript, Azure Functions v4 (Flex Consumption), `pg` |
 | Database | PostgreSQL 16 (Azure Database for PostgreSQL Flexible Server) |
-| Hosting | Azure Static Web Apps (front end), Azure Functions (API and timer) |
+| Hosting | Azure Static Web Apps (front end), Azure Functions (API and timer); GitHub Pages for the demo |
 | CI/CD | GitHub Actions: tests with a real Postgres service container, deploy via Azure OIDC |
 
 ## API

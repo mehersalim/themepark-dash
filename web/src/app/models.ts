@@ -20,3 +20,16 @@ export interface BestTimes {
 
 export interface TrendPoint { bucket: string; avgWait: number; maxWait: number; samples: number }
 export interface Trend { attractionId: string; days: number; points: TrendPoint[] }
+
+/** One saved ride in demo mode: the same data the live API returns, bundled together. */
+export interface RideFile { bestTimes: BestTimes; trend: Trend }
+
+export interface DemoMeta {
+  generatedAt: string;
+  days: number;
+  from: string | null;
+  to: string | null;
+  readings: number;
+  rides: number;
+  parks: number;
+}

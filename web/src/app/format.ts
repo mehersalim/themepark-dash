@@ -13,3 +13,13 @@ export function formatHourRange(hour: number): string {
 export function formatBucket(iso: string, timeZone = 'America/New_York'): string {
   return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: 'numeric', timeZone }).format(new Date(iso));
 }
+
+/** "2026-10-05T14:00:00Z" -> "Oct 5" (Eastern time) */
+export function formatDay(iso: string, timeZone = 'America/New_York'): string {
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone }).format(new Date(iso));
+}
+
+/** Sort key so a park day reads in order: hours after midnight (0 to 3 AM) come after 11 PM, not before 7 AM. */
+export function parkDayOrder(hour: number): number {
+  return hour < 4 ? hour + 24 : hour;
+}

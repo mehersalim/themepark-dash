@@ -57,3 +57,5 @@ jobs:
       - run: npm ci
       - run: npx ng test --watch=false
       - run: npx ng build
+      - name: Demo build still compiles
+        run: npx ng build --configuration production,demo --base-href /themepark-dash/

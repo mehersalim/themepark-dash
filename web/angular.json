@@ -48,6 +48,25 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "demo": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/config.ts",
+                  "with": "src/app/config.demo.ts"
+                }
+              ],
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "demo-data",
+                  "output": "demo-data"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

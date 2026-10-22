@@ -1,0 +1,50 @@
+name: Demo site (GitHub Pages)
+
+# Publishes the "demo mode" build: the same dashboard, reading a saved snapshot of real data,
+# so it keeps working with no backend and costs nothing.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Make sure a data snapshot exists
+        run: |
+          test -f web/demo-data/parks.json || { echo "::error::No snapshot in web/demo-data. Run 'npm run export:demo' in api/ and commit the result."; exit 1; }
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build the demo
+        working-directory: web
+        run: |
+          npm ci
+          npx ng build --configuration production,demo --base-href "/${{ github.event.repository.name }}/"
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: web/dist/web/browser
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

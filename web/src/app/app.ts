@@ -1,8 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
+import { DecimalPipe } from '@angular/common';
 import { ChartComponent } from './chart';
-import { formatBucket, formatHour, formatHourRange } from './format';
-import { Attraction, BestTimes, Park, Trend } from './models';
+import { IS_DEMO } from './demo';
+import { formatBucket, formatDay, formatHour, formatHourRange, parkDayOrder } from './format';
+import { Attraction, BestTimes, DemoMeta, Park, Trend } from './models';
 import { withGaps } from './series';
 
 const BLUE = '#3b82f6';
@@ -13,19 +15,21 @@ const MIN_SAMPLES = 3; // same rule as the API: an hour needs 3+ readings to cou
 
 @Component({
   selector: 'app-root',
-  imports: [ChartComponent],
+  imports: [ChartComponent, DecimalPipe],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
   private readonly api = inject(ApiService);
+  protected readonly demo = inject(IS_DEMO);
 
   protected readonly dayOptions = [3, 7, 14, 30];
   protected readonly parks = signal<Park[]>([]);
   protected readonly attractions = signal<Attraction[]>([]);
   protected readonly parkId = signal<string | null>(null);
   protected readonly rideId = signal<string | null>(null);
-  protected readonly days = signal(14);
+  protected readonly days = signal(inject(IS_DEMO) ? 30 : 14); // the demo snapshot holds the 30-day window
+  protected readonly meta = signal<DemoMeta | null>(null);
   protected readonly bestTimes = signal<BestTimes | null>(null);
   protected readonly trend = signal<Trend | null>(null);
   protected readonly loading = signal(true);
@@ -35,11 +39,12 @@ export class App {
 
   protected readonly currentRide = computed(() => this.attractions().find((a) => a.id === this.rideId()) ?? null);
 
-  protected readonly hourLabels = computed(() => (this.bestTimes()?.hours ?? []).map((h) => formatHour(h.hour)));
-  protected readonly hourData = computed(() => (this.bestTimes()?.hours ?? []).map((h) => h.medianWait));
+  private readonly sortedHours = computed(() => [...(this.bestTimes()?.hours ?? [])].sort((a, b) => parkDayOrder(a.hour) - parkDayOrder(b.hour)));
+  protected readonly hourLabels = computed(() => this.sortedHours().map((h) => formatHour(h.hour)));
+  protected readonly hourData = computed(() => this.sortedHours().map((h) => h.medianWait));
   protected readonly hourColors = computed(() => {
     const bt = this.bestTimes();
-    return (bt?.hours ?? []).map((h) =>
+    return this.sortedHours().map((h) =>
       h.samples < MIN_SAMPLES ? GRAY : h.hour === bt?.best?.hour ? GREEN : h.hour === bt?.worst?.hour ? RED : BLUE,
     );
   });
@@ -49,10 +54,17 @@ export class App {
   protected readonly trendLabels = computed(() => this.trendSeries().labels);
   protected readonly trendData = computed(() => this.trendSeries().data);
 
+  protected readonly demoRange = computed(() => {
+    const m = this.meta();
+    return m?.from && m.to ? `${formatDay(m.from)} to ${formatDay(m.to)}` : null;
+  });
+
   private request = 0; // lets us ignore answers that arrive after the user has moved on
 
   constructor() {
     void this.init();
+    // Details about the saved snapshot; if they can't be loaded the page still works without the banner details.
+    void this.api.meta().then((m) => this.meta.set(m)).catch(() => undefined);
   }
 
   private async init(): Promise<void> {

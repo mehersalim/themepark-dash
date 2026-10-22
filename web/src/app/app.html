@@ -3,6 +3,15 @@
   <p class="sub">When is the best time to ride? Waits are collected every 10 minutes and analysed here.</p>
 </header>
 
+@if (demo) {
+  <aside class="banner" aria-label="Demo mode">
+    <strong>Demo mode.</strong>
+    This page shows a saved snapshot of real data@if (demoRange(); as range) { collected {{ range }}}@if (meta(); as m) { ({{ m.readings | number }} readings across {{ m.rides }} rides)}.
+    The live version (Angular, Azure Functions, PostgreSQL) is described in the
+    <a href="https://github.com/mehersalim/themepark-dash" target="_blank" rel="noopener">project README</a>.
+  </aside>
+}
+
 <main>
   <section class="controls" aria-label="Choose a ride">
     <label>Park
@@ -19,13 +28,15 @@
         }
       </select>
     </label>
-    <label>Look back
-      <select (change)="onDays($event)">
-        @for (d of dayOptions; track d) {
-          <option [value]="d" [selected]="d === days()">{{ d }} days</option>
-        }
-      </select>
-    </label>
+    @if (!demo) {
+      <label>Look back
+        <select (change)="onDays($event)">
+          @for (d of dayOptions; track d) {
+            <option [value]="d" [selected]="d === days()">{{ d }} days</option>
+          }
+        </select>
+      </label>
+    }
   </section>
 
   <p class="status" role="status" aria-live="polite">
@@ -59,6 +70,7 @@
           <p class="small">Not enough data yet.</p>
         }
       </article>
+      @if (!demo) {
       <article class="card">
         <h2>Right now</h2>
         @if (currentRide()?.currentWait !== null && currentRide()?.currentWait !== undefined) {
@@ -69,6 +81,7 @@
           <p class="small">The ride may be closed or not reporting.</p>
         }
       </article>
+      }
     </section>
 
     <section class="panel">
