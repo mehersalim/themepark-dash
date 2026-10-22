@@ -129,5 +129,5 @@ Built to run inside free tiers, but please read this before copying it:
 
 ## License and attribution
 
-Code is yours to use under the MIT license once you add a `LICENSE` file. Wait-time data comes from
+Released under the MIT License (see [LICENSE](LICENSE)). Wait-time data comes from
 [ThemeParks.wiki](https://themeparks.wiki); check their terms before heavy use.
