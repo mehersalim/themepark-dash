@@ -127,8 +127,6 @@ Built to run inside free tiers, but please read this before copying it:
 
 ## What I learned
 
-*(Edit this section in your own words before sharing the repo.)*
-
 - **Cloud free tiers have fine print.** My subscription was blocked from creating Postgres in several regions
   (`OfferRestricted`). I learned to read the CLI's capability output instead of retrying blindly, and found a region that worked.
 - **Test the SQL, not just the code.** Unit tests with a mocked database passed, but the real confidence came from
