@@ -127,18 +127,14 @@ Built to run inside free tiers, but please read this before copying it:
 
 ## What I learned
 
-*(Edit this section in your own words before sharing the repo.)*
+This was my first project on Azure, and I built it entirely on free tiers, so cost shaped many of my decisions. What stuck:
 
-- **Cloud free tiers have fine print.** My subscription was blocked from creating Postgres in several regions
-  (`OfferRestricted`). I learned to read the CLI's capability output instead of retrying blindly, and found a region that worked.
-- **Test the SQL, not just the code.** Unit tests with a mocked database passed, but the real confidence came from
-  running the queries against a real Postgres in CI, in a throwaway database so tests never touch production data.
-- **Keep logic out of the framework.** The router is plain TypeScript used by both the Azure Function and a local
-  dev server, which made it easy to test and to run without Azure tools.
-- **Passwordless deploys.** Setting up OIDC meant debugging an identity mismatch (GitHub now includes numeric IDs in the
-  token subject), which taught me how federated credentials actually work.
-- **Data quality is a design problem.** Many rides report no wait when closed, so the analysis filters those out and
-  requires a minimum number of readings per hour before declaring a "best" time.
+- **Cloud free tiers have fine print.** The free account gives a $200 credit for 30 days and needs a card on file, and my subscription was blocked from creating Postgres in several regions (`OfferRestricted`). I learned to read the CLI's capability output instead of retrying blindly, and found a region that worked.
+- **Design for the end of the free tier.** The trial ends, and I did not want a portfolio project to depend on ongoing cloud costs, so I built a demo mode: the same dashboard reads a saved snapshot of the real data from GitHub Pages, which keeps a working link online after the cloud trial is over.
+- **Test the SQL, not just the code.** Unit tests with a mocked database passed, but the real confidence came from running the queries against a real Postgres in CI, in a throwaway database so tests never touch production data.
+- **Keep logic out of the framework.** The router is plain TypeScript used by both the Azure Function and a local dev server, which made it easy to test and to run without Azure tools.
+- **Passwordless deploys.** Setting up OIDC meant debugging an identity mismatch (GitHub now includes numeric IDs in the token subject), which taught me how federated credentials actually work.
+- **Data quality is a design problem.** Many rides report no wait when they are closed, so the analysis filters those out and requires a minimum number of readings per hour before declaring a "best" time.
 
 ## License and attribution
 
