@@ -1,3 +1,8 @@
+# REFERENCE ONLY. This is the workflow that deployed the API and dashboard to Azure (Oct 5 to Nov 3, 2026).
+# It is kept outside .github/workflows on purpose, so GitHub does not run it. The Azure resources it
+# deployed to have been deleted. To use it again, recreate the resources (see deploy.md), copy this file to
+# .github/workflows/deploy.yml, and set the secrets and variable described there.
+
 name: Deploy
 
 # Every merge to main: run the tests, then deploy the API and the dashboard to Azure.

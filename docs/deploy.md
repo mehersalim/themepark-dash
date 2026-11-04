@@ -1,5 +1,8 @@
 # Deploying your own copy to Azure
 
+> **Status:** this is how the Azure deployment was built and run from Oct 5 to Nov 3, 2026. Those Azure resources have since
+> been deleted. The commands are kept as a reference, and the demo on GitHub Pages replaces the live site.
+
 These are the commands that worked for this project (Azure CLI 2.90, October 2026). Azure flags change between CLI
 versions, so if one is rejected, `az <command> --help` is the source of truth.
 

@@ -1,16 +1,15 @@
 # Theme Park Wait-Time Dashboard
 
-[![Deploy](https://github.com/mehersalim/themepark-dash/actions/workflows/deploy.yml/badge.svg)](https://github.com/mehersalim/themepark-dash/actions/workflows/deploy.yml)
+[![CI](https://github.com/mehersalim/themepark-dash/actions/workflows/ci.yml/badge.svg)](https://github.com/mehersalim/themepark-dash/actions/workflows/ci.yml)
 
 A full-stack analytics app that answers one question: **when is the best time to ride?**
-It collects live Walt Disney World wait times every 10 minutes, stores them in Postgres, and charts
-the patterns by hour of day and over time.
+It collected live Walt Disney World wait times every 10 minutes for a month (Oct 5 to Nov 3, 2026), stored them in
+Postgres, and charts the patterns by hour of day and over time.
 
 **Demo (permanent):** https://mehersalim.github.io/themepark-dash/ &mdash; the same dashboard reading a saved
 snapshot of real data, so it works with no backend.
-**Live Azure deployment (free trial, until early November 2026):**
-[dashboard](https://orange-river-06eb3aa10.4.azurestaticapps.net) and
-[API](https://themepark-func-10687.azurewebsites.net/api/parks).
+**Also ran live on Azure** (Functions, PostgreSQL, Static Web Apps) from Oct 5 to Nov 3, 2026. That deployment was
+retired to avoid ongoing cost, and the demo shows the data it collected. See [docs/deploy.md](docs/deploy.md) for how it was built.
 
 > Unofficial fan project. Not affiliated with or endorsed by Disney. Data from [ThemeParks.wiki](https://themeparks.wiki).
 
@@ -75,11 +74,13 @@ All endpoints are read-only `GET` requests under `/api`.
 
 ## CI/CD
 
-- **Pull requests** run the CI workflow: API build and tests (including SQL tests against a throwaway Postgres
-  container) and the Angular tests and production build.
-- **Every merge to `main`** runs those same checks, and only if they pass deploys the API and the dashboard.
-- GitHub logs in to Azure with **OpenID Connect (federated credentials)**, so there is no long-lived secret to leak.
-  The Azure identity can only act on one resource group and only trusts this repository's `main` branch.
+- **Pull requests and every push to `main`** run the CI workflow: API build and tests (including SQL tests against a
+  throwaway Postgres container), the Angular tests, and production builds of both the live and demo versions.
+- **Every merge to `main`** also publishes the demo to GitHub Pages.
+- While the Azure deployment was live (Oct 5 to Nov 3, 2026), a second workflow deployed the API and dashboard to Azure
+  after the checks passed. GitHub logged in to Azure with **OpenID Connect (federated credentials)**, so there was no
+  long-lived secret to leak. The identity could only act on one resource group and only trusted this repository's `main`
+  branch. That workflow is kept in [docs/azure-deploy.workflow.yml](docs/azure-deploy.workflow.yml) for reference.
 
 ## Run it locally
 

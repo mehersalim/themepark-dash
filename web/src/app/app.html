@@ -1,13 +1,13 @@
 <header class="top">
   <h1>Disney World Wait Times</h1>
-  <p class="sub">When is the best time to ride? Waits are collected every 10 minutes and analysed here.</p>
+  <p class="sub">When is the best time to ride? Waits @if (demo) { were } @else { are } collected every 10 minutes and analysed here.</p>
 </header>
 
 @if (demo) {
   <aside class="banner" aria-label="Demo mode">
     <strong>Demo mode.</strong>
     This page shows a saved snapshot of real data@if (demoRange(); as range) { collected {{ range }}}@if (meta(); as m) { ({{ m.readings | number }} readings across {{ m.rides }} rides)}.
-    The live version (Angular, Azure Functions, PostgreSQL) is described in the
+    The full app (Angular, Azure Functions, PostgreSQL) ran live on Azure and is described in the
     <a href="https://github.com/mehersalim/themepark-dash" target="_blank" rel="noopener">project README</a>.
   </aside>
 }
